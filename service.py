@@ -18,16 +18,14 @@ def lend_a_book(name_user, fullname_user, name_book, author_book):
     try:
         user=repository.find_user(name_user, fullname_user)
         book=repository.find_book(name_book, author_book)
-        lended_to_user = repository.lended_to_user(user)
-        book_issued = repository.book_issued(book)
         if user is None:
             raise UserError
         elif book is None:
             raise BookError
-        lended_to_user = int(lended_to_user or 0)
-        book_issued = int(book_issued or 0)
-        if lended_to_user < 3:
-            if book_issued == 0:
+        lended_to_user = repository.lended_to_user(user)
+        book_issued = repository.book_issued(book)
+        if lended_to_user < 3 :
+            if book_issued == 0 or book_issued==None:
                 new_returned_1 = Receiving(user_id=user.id, book_id=book.id, returned=0)
                 repository.save(new_returned_1)
             else:
@@ -47,13 +45,11 @@ def turn_in_a_book(name_user, fullname_user, name_book,author_book):
             raise UserError
         if book is None:
             raise BookError
-        receiving = repository.new_receiving(user, book)
-        receiving.returned = 1
-        repository.save(receiving)
+        repository.new_receiving(user, book)
     except UserError:
-        print('Ошибка в данных пользователя или пользователь не записан')
+        print('пользователь не найден')
     except BookError:
-        print('Ошибка в названии книги или книга не занесена в каталог')
+        print('книга не нейдена')
     except AttributeError:
         print('Эта книга уже на полке')
 
@@ -63,12 +59,11 @@ def statistics(duty):
     date_of_issue = today - duty_1
     date_of_issue = datetime.date(date_of_issue)
     statistics=repository.book_user(date_of_issue)
-
     if len(statistics) > 0:
         for i in statistics:
             print(f"Книга {i.Books.name_string} автора {i.Books.author_string}"
                   f" выдана читателю {i.Users.name} {i.Users.name} {i.Receiving.received_date}")
     else:
-        print('Нет долгов')
+        print('Все книги на полке')
 
 

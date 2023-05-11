@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, create_engine, ForeignKey,DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
-import psycopg2
+
 
 
 Base = declarative_base()
