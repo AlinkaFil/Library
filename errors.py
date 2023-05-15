@@ -4,3 +4,11 @@ class UserError(AttributeError):
 
 class BookError(AttributeError):
     pass
+
+
+class BookIssuedError(AttributeError):
+    pass
+
+
+class NoPublishedBooksError(AttributeError):
+    pass

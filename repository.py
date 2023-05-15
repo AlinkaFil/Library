@@ -15,6 +15,8 @@ def save(x):
     session = new_session()
     session.add(x)
     session.commit()
+    session.refresh(x)
+    return x
 
 
 def find_user(name_user, fullname_user):
@@ -31,16 +33,16 @@ def find_book(name_book, author_book):
 
 def lended_to_user(user):
     session = new_session()
-    lended_to_user1 = session.query(func.count(Receiving.user_id)).filter(Receiving.returned == 0,
-                                                                          Receiving.user_id == user.id) \
+    lent_to_user1 = session.query(func.count(Receiving.user_id)).filter(Receiving.returned == 0,
+                                                                        Receiving.user_id == user.id) \
         .group_by(Receiving.user_id).scalar()
-    return lended_to_user1
+    return lent_to_user1
 
 
 def book_issued(book):
     session = new_session()
     book_issued1 = session.query(func.count(Receiving.book_id)).filter(Receiving.returned == 0,
-                                                                       Receiving.book_id == book) \
+                                                                       Receiving.book_id == book.id) \
         .group_by(Receiving.book_id).scalar()
     return book_issued1
 
@@ -50,13 +52,20 @@ def new_receiving(user, book):
     new_receiving = session.query(Receiving).filter_by(book_id=book.id, user_id=user.id, returned=0).first()
     new_receiving.returned = 1
     session.commit()
+    session.refresh(new_receiving)
+    return new_receiving
 
 
 def book_user(date_of_issue):
+    result = []
     session = new_session()
-    q = session.query(Receiving, Users, Books).filter(Users.id == Receiving.user_id,
+    q = session.query(Users.name, Users.fullname, Books.name_string, Books.author_string,
+                      Receiving.received_date).filter(Users.id == Receiving.user_id,
                                                       Books.id == Receiving.book_id,
                                                       Receiving.returned == 0,
                                                       func.date_trunc('day',
                                                                       Receiving.received_date) <= date_of_issue).all()
-    return q
+    for row in q:
+        result.append(row._asdict())
+
+    return result

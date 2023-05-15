@@ -1,47 +1,49 @@
-from service import new_book, new_user, lend_a_book, turn_in_a_book, statistics
+import json
+
+from fastapi import FastAPI, Body, HTTPException
+
+import service
+from errors import BookIssuedError, BookError, UserError, NoPublishedBooksError
+
+app = FastAPI()
 
 
-def print_hi():
+@app.post("/new-book")
+def new_book(new_book_name=Body(embed=True), new_book_author=Body(embed=True)):
+    return service.new_book(new_book_name, new_book_author)
+
+
+@app.post("/new-user")
+def new_user(new_user_name=Body(embed=True), new_user_fullname=Body(embed=True)):
+    return service.new_user(new_user_name, new_user_fullname)
+
+
+@app.post("/lend-a-book")
+def lend_a_book(name_user=Body(embed=True), fullname_user=Body(embed=True), name_book=Body(embed=True),
+                author_book=Body(embed=True)):
     try:
-        txt = int(input('''Выберете пункт:
-        1.добавить книгу
-        2.добавить пользователя
-        3.выдать книгу
-        4.сдать книгу
-        5.вывести список названий книг
-        6.выход\n'''))
-        if txt == 1:
-            new_book_name = input('Название книги\n')
-            new_book_author = input('Автор книги\n')
-            new_book(new_book_name, new_book_author)
-        elif txt == 2:
-            new_user_name = input('Имя пользователя\n')
-            new_user_fullname = input('Фамилия пользователя\n')
-            new_user(new_user_name, new_user_fullname)
-        elif txt == 3:
-            name_user = input('Имя пользователя\n')
-            fullname_user = input('Фамилия пользователя\n')
-            name_book = input('Название Книги\n')
-            author_book = input('Автор книги\n')
-            lend_a_book(name_user, fullname_user, name_book, author_book)
-        elif txt == 4:
-            name_user = input('Имя пользователя\n')
-            fullname_user = input('Фамилия пользователя\n')
-            name_book = input('Название Книги\n')
-            author_book = input('Автор книги\n')
-            turn_in_a_book(name_user, fullname_user, name_book,author_book)
-        elif txt == 5:
-            duty = input('за какой срок проверить?(дней)\n')
-            statistics(duty)
-        elif txt == 6:
-            print('ВЫХОД')
-        else:
-            print('Ошибка ввода. Выберете правильный пункт.\n')
-            print_hi()
-    except ValueError:
-        print('Ошибка ввода. Выберете правильный пункт.')
-        print_hi()
+        return service.lend_a_book(name_user, fullname_user, name_book, author_book)
+    except BookIssuedError:
+        raise HTTPException(status_code=403, detail='книга выдана')
+    except UserError:
+        raise HTTPException(status_code=404, detail='пользователь не найден')
+    except BookError:
+        raise HTTPException(status_code=404, detail='книга не нейдена')
 
 
-if __name__ == '__main__':
-    print_hi()
+@app.post("/turn-in-a-book")
+def turn_in_a_book(name_user=Body(embed=True), fullname_user=Body(embed=True), name_book=Body(embed=True),
+                   author_book=Body(embed=True)):
+    try:
+        return service.turn_in_a_book(name_user, fullname_user, name_book, author_book)
+    except UserError:
+        raise HTTPException(status_code=404, detail='пользователь не найден')
+    except BookError:
+        raise HTTPException(status_code=404, detail='книга не нейдена')
+    except AttributeError:
+        raise HTTPException(status_code=403, detail='Эта книга уже на полке')
+
+
+@app.get("/statistics")
+def statistics(duty: int):
+    return service.statistics(duty)
