@@ -1,5 +1,5 @@
-from service import new_book, new_user, lend_a_book, turn_in_a_book, statistics
-from errors import BookIssuedError,BookError,UserError,NoPublishedBooksError
+from app.service import new_book, new_user, lend_a_book, turn_in_a_book, statistics
+from app.errors import BookIssuedError, BookError, UserError
 
 
 def print_hi():
@@ -38,7 +38,7 @@ def print_hi():
             name_book = input('Название Книги\n')
             author_book = input('Автор книги\n')
             try:
-                turn_in_a_book(name_user, fullname_user, name_book,author_book)
+                turn_in_a_book(name_user, fullname_user, name_book, author_book)
             except UserError:
                 print('пользователь не найден')
             except BookError:
