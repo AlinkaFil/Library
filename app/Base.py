@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, create_engine, ForeignKey, DateTime, UniqueConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
+from app.settings import settings
 
 Base = declarative_base()
 
@@ -54,9 +55,16 @@ class Receiving(Base):
 
 
 def qa():
-    engine = create_engine('postgresql+psycopg2://admin:admin@192.168.56.106:5432/pg', echo=True)
-    engine.connect()
+    engine = new_connect()
     Base.metadata.create_all(engine)
+
+
+def new_connect():
+    engine = create_engine(
+        f"postgresql+psycopg2://{settings.user_name}:{settings.password}@{settings.host}:{settings.port}/{settings.db_name}",
+        echo=True)
+    engine.connect()
+    return engine
 
 
 if __name__ == '__main__':

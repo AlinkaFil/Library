@@ -1,11 +1,9 @@
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine, func
-from app.Base import Receiving, Users, Books
-
+from sqlalchemy import func
+from app.Base import Receiving, Users, Books, new_connect
 
 def new_session():
-    engine = create_engine('postgresql+psycopg2://admin:admin@192.168.56.106:5432/pg', echo=True)
-    engine.connect()
+    engine=new_connect()
     Session = sessionmaker(bind=engine)
     session = Session()
     return session

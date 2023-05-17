@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from app.errors import UserError, BookError, BookIssuedError
+from app.errors import UserError, BookError, BookIssuedError, IssueLimitError
 from app.Base import Books, Users, Receiving
 from app.repository import save, find_book, find_user, lended_to_user, book_issued, new_receiving, book_user
 
@@ -32,7 +32,7 @@ def lend_a_book(name_user, fullname_user, name_book, author_book):
         else:
             raise BookIssuedError
     else:
-        print('У читателя слишком много книг')
+        raise IssueLimitError
 
 
 def turn_in_a_book(name_user, fullname_user, name_book, author_book):
@@ -53,7 +53,3 @@ def statistics(duty):
     statistics1 = book_user(date_of_issue)
     print(statistics1)
     return statistics1
-    # if len(statistics) > 0:
-    # for i in statistics:
-    #     print(f"Книга {i.Books.name_string} автора {i.Books.author_string}"
-    #           f" выдана читателю {i.Users.name} {i.Users.name} {i.Receiving.received_date}")

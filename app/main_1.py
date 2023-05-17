@@ -1,5 +1,6 @@
 from app.service import new_book, new_user, lend_a_book, turn_in_a_book, statistics
-from app.errors import BookIssuedError, BookError, UserError
+from app.errors import BookIssuedError, BookError, UserError, IssueLimitError
+from app.Base import Books, Users, Receiving
 
 
 def print_hi():
@@ -32,6 +33,8 @@ def print_hi():
                 print('пользователь не найден')
             except BookError:
                 print('книга не нейдена')
+            except IssueLimitError:
+                print('У читателя слишком много книг')
         elif txt == 4:
             name_user = input('Имя пользователя\n')
             fullname_user = input('Фамилия пользователя\n')
@@ -47,7 +50,12 @@ def print_hi():
                 print('Эта книга уже на полке')
         elif txt == 5:
             duty = int(input('за какой срок проверить?(дней)\n'))
-            statistics(duty)
+            statistics1 = statistics(duty)
+            if len(statistics1) > 0:
+                for i in statistics1:
+                    print(f"Книга {i['name_string']} автора {i['author_string']}"
+                          f" выдана читателю {i['name']} {i['name']} {i['received_date']}")
+
         elif txt == 6:
             print('ВЫХОД')
         else:

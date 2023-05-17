@@ -9,6 +9,9 @@ class BookError(AttributeError):
 class BookIssuedError(AttributeError):
     pass
 
+class IssueLimitError(AttributeError):
+    pass
+
 
 class NoPublishedBooksError(AttributeError):
     pass
