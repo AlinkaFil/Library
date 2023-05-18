@@ -1,7 +1,12 @@
 from datetime import datetime, timedelta
 from app.errors import UserError, BookError, BookIssuedError, IssueLimitError
 from app.Base import Books, Users, Receiving
-from app.repository import save, find_book, find_user, lended_to_user, book_issued, new_receiving, book_user
+from app.repository import save, find_book, find_user, lended_to_user, book_issued, new_receiving, book_user, \
+    repo_create_database
+
+
+def serv_create_database():
+    repo_create_database()
 
 
 def new_book(new_book_name, new_book_author):

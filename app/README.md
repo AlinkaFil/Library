@@ -9,3 +9,10 @@ mylibrary -p 8000:8000 library
 ```
 pip freeze > requirements.txt
 ```
+```
+# venv — Создание виртуальных сред
+
+python -m venv C:\Users\Alinka\Documents\projects\FastAPI\docker_compose\venv
+
+venv\Scripts\Activate.ps1
+```

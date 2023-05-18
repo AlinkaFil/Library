@@ -1,0 +1,49 @@
+version: "3"
+
+networks: #  создание внутренней сети
+  backend:
+    name: backend
+
+services:
+
+  app:
+    image: library:0.0.1
+    container_name: my_library
+    restart: always # автоматический перезапуск
+    environment: # переменное окружение
+      - db_host=db
+      - db_user_name=admin
+      - db_password=admin
+      - db_name=pg
+      - db_port=5432
+    ports: # Проброс портов
+      - 8000:8000
+    networks: # подключение внутренней сети
+      - backend
+    depends_on: # сервис 'app' дождался бы готовности к работе сервиса 'db'
+      - db
+
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: pg
+    volumes: # место хранения базы данных
+      - ~/pg/init:/docker-entrypoint-initdb.d
+      - ~/pg/data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+        - backend
+    depends_on:
+        - db

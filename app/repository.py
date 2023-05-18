@@ -1,9 +1,14 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import func
-from app.Base import Receiving, Users, Books, new_connect
+from app.Base import Receiving, Users, Books, new_connect, create_database
+
+
+def repo_create_database():
+    create_database()
+
 
 def new_session():
-    engine=new_connect()
+    engine = new_connect()
     Session = sessionmaker(bind=engine)
     session = Session()
     return session

@@ -54,18 +54,18 @@ class Receiving(Base):
                                                      self.received_date, self.returned)
 
 
-def qa():
+def create_database():
     engine = new_connect()
     Base.metadata.create_all(engine)
 
 
 def new_connect():
     engine = create_engine(
-        f"postgresql+psycopg2://{settings.user_name}:{settings.password}@{settings.host}:{settings.port}/{settings.db_name}",
+        f"postgresql+psycopg2://{settings.db_user_name}:{settings.db_password}@{settings.db_host}:{settings.db_port}/{settings.db_name}",
         echo=True)
     engine.connect()
     return engine
 
 
 if __name__ == '__main__':
-    qa()
+    create_database()
